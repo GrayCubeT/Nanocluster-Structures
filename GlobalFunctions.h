@@ -2,8 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <math.h>
+#include <sstream>
 
 bool keypress(sf::Keyboard::Key key);
+std::string numtostr(double number);
 
 class BrounRNG {
 private:

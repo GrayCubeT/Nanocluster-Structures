@@ -10,11 +10,17 @@
 using namespace sf;
 
 enum {
-    CIRCUSSIZE = 1000,
-    START_TEMPERATURE = 20,
-    MOVE_DELAY = 100,
-    SPAWN_DELAY = 100,
-    BUTTON_DELAY = 500
+    CIRCUSSIZE = 10000,
+    CLUSTER_SIZE = 30,
+
+    START_TEMPERATURE = 30,
+    // how much frames it takes for next step
+    MOVE_DELAY = 1,
+    // how much frames it takes to spawn a new cluster (should be a multiple of move_delay)
+    SPAWN_DELAY = 6,
+    // how much frames it takes for button presses to register after a button press
+    BUTTON_DELAY = 6,
+    RANDOM_ENABLED = false
 };
 
 int main() {
@@ -23,30 +29,45 @@ int main() {
     double temperature = START_TEMPERATURE;
     
     RenderWindow win(VideoMode(700, 700), "oops", Style::Fullscreen);
-	win.setFramerateLimit(60);
+	win.setFramerateLimit(120);
     
     // window properties
     bool paused = false;
 
     // views and handling
-    View fixedview = win.getDefaultView();
     View view = win.getDefaultView();
     viewHandler vhandler(win);
     int btnPressed = 0;
     sf::Vector2f mpos;
 
     // timers
-    double buttonCooldown = 0;
-    double spawnTimer = 0;
-    double moveTimer = 0;
+    unsigned int frameCount = 0;
+    unsigned int moveTimer = 0;
+    unsigned int spawnTimer = 0;
+    unsigned int buttonTimer = 0;
 
     // ClusterStructure that manages everything
-    ClusterStructure clusters = ClusterStructure(CIRCUSSIZE, temperature);
+    ClusterStructure clusters = ClusterStructure(CIRCUSSIZE, temperature, CLUSTER_SIZE, MOVE_DELAY);
+    
+    // starting center cluster
+    clusters.addCluster(HexCluster(CLUSTER_SIZE, sf::Vector2f(), true));
 
-    clusters.addCluster(HexCluster(20, sf::Vector2f(), true));
+    // gui stuff
+    Font font;
+    
+    if (!font.loadFromFile("virgo.ttf")) {
+        std::cout << "font not loaded, exiting";
+        return 0;
+    }
 
+    View fixedview = win.getDefaultView();
+    Text mposDebugText = Text("", font);
+    mposDebugText.setFillColor(Color::Magenta);
+    mposDebugText.setOutlineThickness(1);
+    mposDebugText.setOutlineColor(Color::White);
+
+    // actual program
     view.move(sf::Vector2f(-vhandler.clientsize.x / 2, -vhandler.clientsize.y / 2));
-
     while (win.isOpen()) {
         mpos = win.mapPixelToCoords(sf::Mouse::getPosition());
         vhandler.mpos = mpos;
@@ -69,27 +90,42 @@ int main() {
         vhandler.handle(win, view);
 
         // create new clusters
-        // F
-        if (keypress(Keyboard::F) && buttonCooldown <= 0) {
-            clusters.addCluster(HexCluster(30, vhandler.mpos));
-            buttonCooldown = BUTTON_DELAY;
+        // manual spawn with F
+        if (keypress(Keyboard::F) && buttonTimer <= frameCount) {
+            clusters.addCluster(HexCluster(CLUSTER_SIZE, vhandler.mpos));
+            buttonTimer = frameCount + BUTTON_DELAY;
         }
-        // random
-        if (spawnTimer <= 0) {
+        // random spawn
+        if (spawnTimer <= frameCount && RANDOM_ENABLED) {
             clusters.addRandom();
-            spawnTimer = SPAWN_DELAY;
+            spawnTimer = frameCount + SPAWN_DELAY;
         }
 
-        // physics
-        if (moveTimer <= 0) {
-            moveTimer = MOVE_DELAY;
+        if (keypress(Keyboard::B)) {
+            frameCount = frameCount;
+        }
+
+        // physics, uses clusterstructure's step()
+        if (moveTimer <= frameCount) {
+            moveTimer = frameCount + MOVE_DELAY;
             clusters.step();
+            
         }
         
+        // this runs in steps, so running this every frame is aclually better when it's correctly set up
+        clusters.collisionCheck();
+        
+        // drawing
 		win.clear();
         win.setView(fixedview);
+        
         // draw text + GUI here
-
+        auto _ = clusters.__secret_debug_function__(mpos);
+        mposDebugText.setString(numtostr(_.x) + " " + numtostr(_.y));
+        win.draw(mposDebugText);
+        
+        
+        // 
         win.setView(view);
         
         if (clusters.clusterNum > 0) {
@@ -98,9 +134,9 @@ int main() {
 
 		win.display();
 
-        buttonCooldown -= 1000 / 60;
-        moveTimer -= 1000 / 60;
-        spawnTimer -= 1000 / 60;
+
+        // timers update
+        frameCount++;
 	}
     
 	return 0;

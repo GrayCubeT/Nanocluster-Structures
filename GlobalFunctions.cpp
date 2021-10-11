@@ -4,6 +4,13 @@ bool keypress(sf::Keyboard::Key key) {
     return sf::Keyboard::isKeyPressed(key);
 }
 
+std::string numtostr(double number) {
+    std::stringstream ss;
+    ss << number;
+    std::string ans = ss.str();
+    return ans;
+}
+
 
 BrounRNG::BrounRNG(double t) : seedling(){
     // this creates an rng generator

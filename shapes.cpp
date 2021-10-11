@@ -50,6 +50,9 @@ HexCluster::HexCluster(const double r, const sf::Vector2f& p, bool stop) : Clust
     }
 }
 
+
+
+
 Cluster::Cluster(int num, const sf::Vector2f& p, bool stop) {
     pos = p;
     vertexnum = num;
@@ -58,3 +61,22 @@ Cluster::Cluster(int num, const sf::Vector2f& p, bool stop) {
     lifetime = 0;
 }
 
+
+bool HexCluster::intersects(Cluster* other) {
+    HexCluster* o;
+    sf::Vector2f dist = other->pos - pos;
+    if (o = dynamic_cast<HexCluster*>(other)) {
+        double maxdist = radius + o->radius;
+        maxdist *= maxdist;
+        return (dist.x * dist.x + dist.y * dist.y < maxdist);
+    }
+    else {
+        double maxdist = radius;
+        maxdist *= maxdist;
+        return (dist.x * dist.x + dist.y * dist.y < maxdist);
+    }
+
+}
+bool Cluster::intersects(Cluster* other) {
+    return (pos == other->pos);
+}
