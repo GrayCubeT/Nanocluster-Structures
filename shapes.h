@@ -25,6 +25,7 @@ public:
     std::vector<sf::Vector2f> verticesPos;
 
     Cluster(int num, const sf::Vector2f& p = sf::Vector2f(), bool stop = false);
+    virtual bool intersects(Cluster* other);
 };
 
 // defines a hexagonal cluster 
@@ -32,4 +33,5 @@ class HexCluster : public Cluster {
 public:
     double radius;
     HexCluster(const double r = 1, const sf::Vector2f & p = sf::Vector2f(), bool stop = false);
+    virtual bool intersects(Cluster* other) override;
 };
