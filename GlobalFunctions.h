@@ -3,9 +3,12 @@
 #include <random>
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 
 bool keypress(sf::Keyboard::Key key);
-std::string numtostr(double number);
+
+template <typename T>
+std::string numtostr(T number, int precision = 0);
 
 class BrounRNG {
 private:
@@ -19,15 +22,12 @@ public:
     sf::Vector2f rng();
 };
 
-class viewHandler {
-public:
-    sf::Vector2f mpos, prevmpos;
-    bool lmb, rmb, rmbmoveflag;
-    double shiftmult;
-    sf::Vector2f clientsize;
-    double screenratio;
+template<typename T>
+inline std::string numtostr(T number, int precision) {
+    std::stringstream ss;
+    ss.precision(precision);
+    ss << std::fixed << number;
+    std::string ans = ss.str();
+    return ans;
+}
 
-    viewHandler(sf::RenderWindow& win);
-    void handle(sf::RenderWindow& win, sf::View& view);
-    void mouseWheelScroll(sf::RenderWindow& win, sf::View& view, float delta);
-};

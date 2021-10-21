@@ -97,6 +97,17 @@ sf::Vector2u ClusterStructure::__secret_debug_function__(sf::Vector2f pos) {
     return mmap.translateToInternalCoords(pos);
 }
 
+void ClusterStructure::regenerate(double temp, double cluSize) {
+    for (auto i : clusters) {
+        mmap.remove(&i);
+    }
+    clusters.clear();
+    moveGenerator.settmp(temp);
+    temperature = temp;
+    clusterSize = cluSize;
+    clusterNum = 0;
+}
+
 MeshMap::MeshMap(const int& _stepAmt,
     const double& _clusterSize,
     const double& _dimensions)
@@ -109,7 +120,6 @@ MeshMap::MeshMap(const int& _stepAmt,
 
 }
 sf::Vector2u MeshMap::translateToInternalCoords(sf::Vector2f pos) {
-    // this might work incorrectly somehow?
     unsigned int x = std::floor((pos.x + dimension) / cellSize);
     unsigned int y = std::floor((pos.y + dimension) / cellSize);
     return sf::Vector2u(x, y);
