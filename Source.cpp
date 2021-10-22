@@ -46,7 +46,7 @@ int main() {
     sf::RectangleShape start(sf::Vector2f(180, 50));
     sf::Texture stext;
     start.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 - 25);
-    if (!stext.loadFromFile("images/placeholder.jpg")) {
+    if (!stext.loadFromFile("images/startBtn.jpg")) {
         std::cout << "Failed to load image\n";
         return 0;
     }
@@ -55,7 +55,7 @@ int main() {
     sf::RectangleShape authors(sf::Vector2f(180, 50));
     sf::Texture at;
     authors.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 + 25 + 20);
-    if (!at.loadFromFile("images/placeholder.jpg")) {
+    if (!at.loadFromFile("images/authors.jpg")) {
         std::cout << "Failed to load image\n";
         return 0;
     }
@@ -64,7 +64,7 @@ int main() {
     sf::RectangleShape exit(sf::Vector2f(180, 50));
     sf::Texture et;
     exit.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 + 25 + 50 + 40);
-    if (!et.loadFromFile("images/placeholder.jpg")) {
+    if (!et.loadFromFile("images/exitBtn.jpg")) {
         std::cout << "Failed to load image\n";
         return 0;
     }
@@ -261,8 +261,6 @@ int game(sf::RenderWindow& win) {
                 }
                 if (gui.stopRequest) {
                     clusters.regenerate(temperature, cluSize);
-                    paused = true;
-                    randomSpawn = true;
                     gui.stopRequest = false;
                 }
                 if (gui.exitRequest) {

@@ -37,31 +37,35 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
             _clientsize->x / 14 * 6, _clientsize->y / 7 * 0.4))
 
 {
-    if (!stopTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!stopTexture.loadFromFile("images/clearBtn.jpg")) {
         failed = true;
         return;
     }
-    if (!startTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!startTexture.loadFromFile("images/startBtn.jpg")) {
         failed = true;
         return;
     }
-    if (!pauseTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!unpauseTexture.loadFromFile("images/pauseOn.jpg")) {
         failed = true;
         return;
     }
-    if (!toggleSpawnTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!pauseTexture.loadFromFile("images/pauseOff.jpg")) {
         failed = true;
         return;
     }
-    if (!toggleNoDrawTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!spawnOnTexture.loadFromFile("images/spawnOn.jpg")) {
+        failed = true;
+        return;
+    }
+    if (!spawnOffTexture.loadFromFile("images/spawnOff.jpg")) {
         failed = true;
         return;
     } 
-    if (!getStatsTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!getStatsTexture.loadFromFile("images/getStatsBtn.jpg")) {
         failed = true;
         return;
     }
-    if (!exitTexture.loadFromFile("images/placeholder.jpg")) {
+    if (!exitTexture.loadFromFile("images/exitBtn.jpg")) {
         failed = true;
         return;
     }
@@ -87,7 +91,7 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
 
     toggleSpawnBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
     toggleSpawnBtn.setFillColor(sf::Color::White);
-    toggleSpawnBtn.setTexture(&toggleSpawnTexture);
+    toggleSpawnBtn.setTexture(&spawnOnTexture);
     toggleSpawnBtn.setPosition(x * 0.2, y * 1.1);
 
     getStatsBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
@@ -124,18 +128,35 @@ void Gui::check(sf::Vector2i mpos) {
     click = true;
     if (stopBtn.getGlobalBounds().contains(p)) {
         stopRequest = true;
+        *paused = true;
+        *spawnRandom = true;
+        toggleSpawnBtn.setTexture(&spawnOnTexture);
+        pauseBtn.setTexture(&pauseTexture);
     }
     else if (pauseBtn.getGlobalBounds().contains(p)) {
         *paused = !*paused;
+        if (*paused) {
+            pauseBtn.setTexture(&pauseTexture);
+        }
+        else {
+            pauseBtn.setTexture(&unpauseTexture);
+        }
     }
     else if (getStatsBtn.getGlobalBounds().contains(p)) {
         statsRequest = true;
     }
     else if (startBtn.getGlobalBounds().contains(p)) {
         *paused = false;
+        pauseBtn.setTexture(&unpauseTexture);
     }
     else if (toggleSpawnBtn.getGlobalBounds().contains(p)) {
         *spawnRandom = !*spawnRandom;
+        if (*spawnRandom) {
+            toggleSpawnBtn.setTexture(&spawnOnTexture);
+        }
+        else {
+            toggleSpawnBtn.setTexture(&spawnOffTexture);
+        }
     } 
     else if (exitBtn.getGlobalBounds().contains(p)) {
         exitRequest = true;

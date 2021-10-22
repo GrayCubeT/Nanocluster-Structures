@@ -36,11 +36,15 @@ private:
     // button textures
     sf::Texture stopTexture;
     sf::Texture startTexture;
-    sf::Texture pauseTexture;
-    sf::Texture toggleSpawnTexture;
-    sf::Texture toggleNoDrawTexture;
     sf::Texture getStatsTexture;
     sf::Texture exitTexture;
+
+    sf::Texture pauseTexture;
+    sf::Texture unpauseTexture;
+
+    sf::Texture spawnOnTexture;
+    sf::Texture spawnOffTexture;
+
 
     // actual buttons (trolling achieved)
     sf::RectangleShape exitBtn;
