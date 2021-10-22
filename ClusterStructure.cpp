@@ -3,13 +3,12 @@
 
 ClusterStructure::ClusterStructure(int maxClu, double temp, double cluSize, double moveDelay, double _dimension) : 
         moveGenerator(temp), temperature(temp), maxClusters(maxClu), clusterSize(cluSize), 
-        dimension(_dimension) {
+        dimension(_dimension), mmap() {
     clusterNum = 0;
     vertices.clear();
     vertices.resize(maxClu * 12ll);
     vertices.setPrimitiveType(sf::Triangles);
     clusters.reserve(maxClu);
-    mmap = MeshMap(moveDelay, cluSize * 4, _dimension);
 }
 
 bool ClusterStructure::addCluster(HexCluster clu) {
@@ -98,14 +97,23 @@ sf::Vector2u ClusterStructure::__secret_debug_function__(sf::Vector2f pos) {
 }
 
 void ClusterStructure::regenerate(double temp, double cluSize) {
-    for (auto i : clusters) {
-        mmap.remove(&i);
+    // recreate the map
+    mmap.clear();
+
+
+    for (int i = 0; i < clusterNum * 12; i++) {
+        vertices[i].position = sf::Vector2f(-40000, -40000);
     }
     clusters.clear();
     moveGenerator.settmp(temp);
     temperature = temp;
     clusterSize = cluSize;
     clusterNum = 0;
+}
+
+void ClusterStructure::settemp(double temp) {
+    temperature = temp;
+    moveGenerator.settmp(temp);
 }
 
 MeshMap::MeshMap(const int& _stepAmt,
@@ -118,6 +126,9 @@ MeshMap::MeshMap(const int& _stepAmt,
     size = std::ceil(dimension / cellSize * 2);
     meshMap = new std::list<Cluster*>[size * size];
 
+}
+MeshMap::~MeshMap() {
+    delete[] meshMap;
 }
 sf::Vector2u MeshMap::translateToInternalCoords(sf::Vector2f pos) {
     unsigned int x = std::floor((pos.x + dimension) / cellSize);
@@ -248,4 +259,11 @@ void MeshMap::collision(Cluster* a, Cluster* b) {
     // can be made a bit more abstract
     a->stopped = true;
     b->stopped = true;
+    
+}
+
+void MeshMap::clear() {
+    for (int i = 0; i < size * size; i++) {
+        meshMap[i].clear();
+    }
 }

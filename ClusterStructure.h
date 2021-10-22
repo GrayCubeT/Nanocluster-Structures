@@ -22,7 +22,8 @@ public:
     std::list<Cluster*>* meshMap;
 
     
-    MeshMap(const int& _stepAmt = 1, const double& _clusterSize = 30, const double& _dimensions = 10000);
+    MeshMap(const int& _stepAmt = 1, const double& _clusterSize = 300, const double& _dimensions = 10000);
+    ~MeshMap();
     sf::Vector2u translateToInternalCoords(sf::Vector2f pos);
     std::list<Cluster*>& find(const sf::Vector2f& point);
     bool insert(Cluster* clu, sf::Vector2f offset = sf::Vector2f());
@@ -33,6 +34,8 @@ public:
     // internally calls collision method. only runs a part of the calculation
     void checkCollision();
     void collision(Cluster* a, Cluster* b);
+
+    void clear();
 };
 
 // this class represents the entirety of clusters 
@@ -59,4 +62,5 @@ public:
     int collisionCheck();
     sf::Vector2u __secret_debug_function__(sf::Vector2f pos);
     void regenerate(double temp, double cluSize);
+    void settemp(double temp);
 };

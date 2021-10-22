@@ -6,7 +6,6 @@ EventHandler::EventHandler(sf::RenderWindow* _win, viewHandler* _vhandler, sf::V
 void EventHandler::handle() {
     // event handling
     Event event;
-    View view = win->getView();
     while (win->pollEvent(event)) {
         // close window event
         if (event.type == Event::Closed) {

@@ -6,17 +6,17 @@
 // there is legit no way this works
 Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _noDraw,
     double* _cluSize, double* _temp, int* _spawnSpeed, int* _spawnAmt,
-    int* fps) :
-    clientsize(_clientsize), paused(_paused), spawnRandom(_spawnRandom), noDraw(_noDraw),
+    int* _fps) :
+    clientsize(_clientsize), paused(_paused), spawnRandom(_spawnRandom),
     statsRequest(false), stopRequest(false), click(false), failed(true), exitRequest(false),
-    fpsChange(false),
+    fpsChange(false), tempChange(false), sizeChange(false),
     cluSize(
         _cluSize, MAX_CLUSTER_SIZE, MIN_CLUSTER_SIZE,
         sf::FloatRect(
             _clientsize->x / 14 * 0.2, _clientsize->y / 7 * 2,
             _clientsize->x / 14 * 6, _clientsize->y / 7 * 0.4)),
     temp(
-        _temp, std::min(double(MAX_TEMP), *_cluSize), MIN_TEMP,
+        _temp, MAX_TEMP, MIN_TEMP,
         sf::FloatRect(
             _clientsize->x / 14 * 0.2, _clientsize->y / 7 * 2.8,
             _clientsize->x / 14 * 6, _clientsize->y / 7 * 0.4)),
@@ -31,7 +31,7 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
             _clientsize->x / 14 * 0.2, _clientsize->y / 7 * 4.4,
             _clientsize->x / 14 * 6, _clientsize->y / 7 * 0.4)),
     calcSpeed(
-        fps, MAX_FPS, MIN_FPS,
+        _fps, MAX_FPS, MIN_FPS,
         sf::FloatRect(
             _clientsize->x / 14 * 0.2, _clientsize->y / 7 * 5.2,
             _clientsize->x / 14 * 6, _clientsize->y / 7 * 0.4))
@@ -90,11 +90,6 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
     toggleSpawnBtn.setTexture(&toggleSpawnTexture);
     toggleSpawnBtn.setPosition(x * 0.2, y * 1.1);
 
-    toggleNoDrawBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
-    toggleNoDrawBtn.setFillColor(sf::Color::White);
-    toggleNoDrawBtn.setTexture(&toggleNoDrawTexture);
-    toggleNoDrawBtn.setPosition(x * 2.7, y * 1.1);
-
     getStatsBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
     getStatsBtn.setFillColor(sf::Color::White);
     getStatsBtn.setTexture(&getStatsTexture);
@@ -116,7 +111,6 @@ void Gui::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(spawnAmt);
     target.draw(calcSpeed);
     target.draw(getStatsBtn);
-    target.draw(toggleNoDrawBtn);
     target.draw(toggleSpawnBtn);
     target.draw(startBtn);
     target.draw(stopBtn);
@@ -130,21 +124,15 @@ void Gui::check(sf::Vector2i mpos) {
     click = true;
     if (stopBtn.getGlobalBounds().contains(p)) {
         stopRequest = true;
-        *paused = true;
-        *spawnRandom = false;
     }
     else if (pauseBtn.getGlobalBounds().contains(p)) {
         *paused = !*paused;
     }
     else if (getStatsBtn.getGlobalBounds().contains(p)) {
         statsRequest = true;
-        *paused = true;
     }
     else if (startBtn.getGlobalBounds().contains(p)) {
         *paused = false;
-    }
-    else if (toggleNoDrawBtn.getGlobalBounds().contains(p)) {
-        *noDraw = !*noDraw;
     }
     else if (toggleSpawnBtn.getGlobalBounds().contains(p)) {
         *spawnRandom = !*spawnRandom;
@@ -159,9 +147,11 @@ void Gui::check(sf::Vector2i mpos) {
 
     if (cluSize.contains(p)) {
         cluSize.onPress(p);
+        sizeChange = true;
     }
     else if (temp.contains(p)) {
         temp.onPress(p);
+        tempChange = true;
     }
     else if (spawnSpeed.contains(p)) {
         spawnSpeed.onPress(p);
@@ -175,5 +165,6 @@ void Gui::check(sf::Vector2i mpos) {
     }
     
 }
+
 
 

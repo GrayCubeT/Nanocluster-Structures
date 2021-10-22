@@ -11,7 +11,7 @@ enum {
     MAX_TEMP = 200,
     MIN_SPAWN_SPEED = 2,
     MAX_SPAWN_SPEED = 240,
-    MAX_FPS = 240,
+    MAX_FPS = 600,
     MIN_FPS = 30,
 
     // used for view generation
@@ -30,7 +30,7 @@ enum {
     // how much clusters are randomly spawned each time
     SPAWN_AMOUNT = 1,
     // do random clusters spawn?
-    RANDOM_ENABLED = false,
+    RANDOM_ENABLED = true,
 
     // this is more global speed control (higher = faster)
     FPS = 120

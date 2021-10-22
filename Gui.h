@@ -48,7 +48,6 @@ private:
     sf::RectangleShape startBtn;
     sf::RectangleShape pauseBtn;
     sf::RectangleShape toggleSpawnBtn;
-    sf::RectangleShape toggleNoDrawBtn;
     sf::RectangleShape getStatsBtn;
 
     // sliders
@@ -62,8 +61,6 @@ private:
     sf::Vector2f* clientsize;
     bool* paused;
     bool* spawnRandom;
-    bool* noDraw;
-
 
 public:
     // values that must be checked every time
@@ -73,6 +70,8 @@ public:
     bool click;
     bool failed;
     bool fpsChange;
+    bool tempChange;
+    bool sizeChange;
 
     Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _noDraw, 
         double* _cluSize, double* _temp, int* _spawnSpeed, int* _spawnAmt,
@@ -104,7 +103,7 @@ inline Slider<T>::Slider(T* val, T maxval, T minval, sf::FloatRect _rect) :
     t.setOutlineThickness(OUTLINE_THICKNESS);
     t.setFillColor(TEXT_COLOR);
     t.setCharacterSize(_rect.height - 10);
-    t.setPosition(_rect.left + _rect.width + t.getLocalBounds().width / 2 + 3, _rect.top);
+    t.setPosition(_rect.left + _rect.width + 10, _rect.top);
 }
 
 template<typename T>
@@ -135,6 +134,5 @@ inline void Slider<T>::onPress(sf::Vector2f pos) {
     fill.setSize(sf::Vector2f(size.x * part, size.y));
 
     t.setString(numtostr(*val, 1));
-    t.setPosition(rect.left + rect.width + t.getLocalBounds().width / 2 + 3, rect.top);
 
 }
