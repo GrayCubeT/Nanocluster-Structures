@@ -1,10 +1,17 @@
 #pragma once
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "shapes.h"
 #include "GlobalFunctions.h"
+#include "Constants.h"
 #include <random>
 #include <list>
+#include <fstream>
+#include <stdlib.h>
+#include <algorithm>
+#include <vector>
+
+
+extern sf::Clock gclock;
 
 // An internal class that represents a square map of squares for faster collision detection
 // also supports splitting the map and taking multiple steps to calculate collisions
@@ -13,16 +20,17 @@ private:
     double dimension;
     double cellSize;
     size_t size;
-
 public:
     int stepAmt;
     int stepNum;
+    bool staticCollision;
 
     //the actual map
     std::list<Cluster*>* meshMap;
 
     
     MeshMap(const int& _stepAmt = 1, const double& _clusterSize = 300, const double& _dimensions = 10000);
+    
     ~MeshMap();
     sf::Vector2u translateToInternalCoords(sf::Vector2f pos);
     std::list<Cluster*>& find(const sf::Vector2f& point);
@@ -35,6 +43,7 @@ public:
     void checkCollision();
     void collision(Cluster* a, Cluster* b);
 
+
     void clear();
 };
 
@@ -46,13 +55,20 @@ private:
     int maxClusters;
     std::vector <HexCluster> clusters;
     BrounRNG moveGenerator;
+    std::mt19937 mt_rand;
+    std::uniform_real_distribution<double> realRandom;
+
     double dimension;
     MeshMap mmap;
+    bool staticCollision;
 
 public:
     int clusterNum;
     double temperature;
     double clusterSize;
+
+    void load(std::ifstream& in);
+    void save(std::ofstream& out);
 
     ClusterStructure(int maxClusters, double temp, double cluSize = 30, double moveDelay = 1, double _dimension = 10000.0);
     bool addCluster(HexCluster);
@@ -63,4 +79,9 @@ public:
     sf::Vector2u __secret_debug_function__(sf::Vector2f pos);
     void regenerate(double temp, double cluSize);
     void settemp(double temp);
+    void swapCollisionTech();
+
+    std::vector<HexCluster*> timesort();
+    
+
 };

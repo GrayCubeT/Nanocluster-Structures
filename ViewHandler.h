@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "GlobalFunctions.h"
+#include "Constants.h"
 
 enum {
     MOVE_MULTIPLIER = 10

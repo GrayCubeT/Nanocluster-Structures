@@ -1,34 +1,10 @@
 #include "shapes.h"
 
-Hexagon::Hexagon(const double radius = 0) :
-    h_radius(radius) {
-    update();
-}
 
-void Hexagon::setRadius(const double radius) {
-    h_radius = radius;
-    update();
-}
 
-const double Hexagon::getRadius() const {
-    return h_radius;
-}
-
-std::size_t Hexagon::getPointCount() const {
-    return 6;
-}
-
-sf::Vector2f Hexagon::getPoint(size_t index) const {
-    static const float pi = 3.141592654f;
-
-    double angle = (double) index * 2 * pi / getPointCount() - pi / 2;
-    double x = cos(angle) * h_radius;
-    double y = sin(angle) * h_radius;
-
-    return sf::Vector2f(h_radius + x, h_radius + y);
-}
-
-HexCluster::HexCluster(const double r, const sf::Vector2f& p, bool stop) : Cluster(12, p, stop) {
+HexCluster::HexCluster(const double r, const sf::Vector2f& p, bool stop, unsigned long long int stime) : 
+        Cluster(12, p, stop) {
+    lifetime = stime;
     radius = r;
     double angle, x, y;
     static const double pi = 3.141592654;
@@ -77,6 +53,7 @@ bool HexCluster::intersects(Cluster* other) {
     }
 
 }
+
 bool Cluster::intersects(Cluster* other) {
     return (pos == other->pos);
 }

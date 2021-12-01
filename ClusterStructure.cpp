@@ -1,9 +1,60 @@
 #include "ClusterStructure.h"
 
 
-ClusterStructure::ClusterStructure(int maxClu, double temp, double cluSize, double moveDelay, double _dimension) : 
+void ClusterStructure::load(std::ifstream& in) {
+
+    in.seekg(0, std::ios::beg);
+    in.read(reinterpret_cast<char*>(&maxClusters), sizeof(int));
+    in.read(reinterpret_cast<char*>(&dimension), sizeof(double));
+    in.read(reinterpret_cast<char*>(&temperature), sizeof(double));
+    in.read(reinterpret_cast<char*>(&clusterSize), sizeof(double));
+    
+
+    int cluNum;
+    in.read(reinterpret_cast<char*>(&cluNum), sizeof(int));
+
+    this->regenerate(temperature, clusterSize);
+
+    for (int i = 0; i < cluNum; i++) {
+        char st;
+        unsigned long long int lifetime;
+        double rad;
+        float x, y;
+
+        in.read(&st, sizeof(char));
+        in.read(reinterpret_cast<char*>(&rad), sizeof(rad));
+        in.read(reinterpret_cast<char*>(&x), sizeof(float));
+        in.read(reinterpret_cast<char*>(&y), sizeof(float));
+        in.read(reinterpret_cast<char*>(&lifetime), sizeof(unsigned long long int));
+        
+        this->addCluster(HexCluster(rad, sf::Vector2f(x, y), (st != 0), lifetime));
+
+    }
+}
+
+void ClusterStructure::save(std::ofstream& out) {
+    out.write(reinterpret_cast<const char*>(&maxClusters), sizeof(maxClusters));
+    out.write(reinterpret_cast<const char*>(&dimension), sizeof(dimension));
+    out.write(reinterpret_cast<const char*>(&temperature), sizeof(temperature));
+    out.write(reinterpret_cast<const char*>(&clusterSize), sizeof(clusterSize));
+    
+    out.write(reinterpret_cast<const char*>(&clusterNum), sizeof(clusterNum));
+
+    for (int i = 0; i < clusterNum; i++) {
+        char st = (char)clusters[i].stopped;
+        out.write(&st, sizeof(st));
+        out.write(reinterpret_cast<const char*>(&(clusters[i].radius)), sizeof(clusters[i].radius));
+        out.write(reinterpret_cast<const char*>(&(clusters[i].pos.x)), sizeof(clusters[i].pos.x));
+        out.write(reinterpret_cast<const char*>(&(clusters[i].pos.y)), sizeof(clusters[i].pos.y));
+        out.write(reinterpret_cast<const char*>(&(clusters[i].lifetime)), sizeof(clusters[i].lifetime));
+    }
+
+}
+
+ClusterStructure::ClusterStructure(int maxClu, double temp, double cluSize, double moveDelay, double _dimension) :
         moveGenerator(temp), temperature(temp), maxClusters(maxClu), clusterSize(cluSize), 
-        dimension(_dimension), mmap() {
+        dimension(_dimension), mmap(), staticCollision(false), mt_rand(time(0)), 
+        realRandom(-_dimension, _dimension) {
     clusterNum = 0;
     vertices.clear();
     vertices.resize(maxClu * 12ll);
@@ -27,7 +78,8 @@ bool ClusterStructure::addRandom() {
     if (clusterNum >= maxClusters) {
         return false;
     }
-    clusters.push_back(HexCluster(clusterSize, sf::Vector2f((rand() % (int)(dimension * 2)) - dimension, (rand() % (int)(dimension * 2)) - dimension)));
+    clusters.push_back(HexCluster(clusterSize, 
+            sf::Vector2f(realRandom(mt_rand), realRandom(mt_rand)), false));
     mmap.insert(&clusters[clusterNum]);
     for (int i = 0; i < 12; ++i) {
         vertices[clusterNum * 12ll + i].position = clusters[clusterNum].pos + clusters[clusterNum].verticesPos[i];
@@ -36,6 +88,7 @@ bool ClusterStructure::addRandom() {
 
     return true;
 }
+
 void ClusterStructure::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(vertices);
 }
@@ -57,6 +110,7 @@ bool ClusterStructure::step() {
                     mmap.insert(&clusters[i]);
                     for (int j = 0; j < 12; ++j) {
                         vertices[i * 12ll + j].position = clusters[i].pos + clusters[i].verticesPos[j];
+                        vertices[(clusterNum - 1) * 12ll + j].position = sf::Vector2f(-40000, -40000);
                     }
                     clusterNum--;
                     i--;
@@ -65,6 +119,10 @@ bool ClusterStructure::step() {
                     mmap.remove(&clusters[i]);
                     clusters.pop_back();
                     clusterNum--;
+                    for (int j = 0; j < 12; ++j) {
+                        vertices[i * 12ll + j].position = sf::Vector2f(-40000, -40000);
+                    }
+                    i--;
                     continue;
                 }
             }
@@ -100,8 +158,7 @@ void ClusterStructure::regenerate(double temp, double cluSize) {
     // recreate the map
     mmap.clear();
 
-
-    for (int i = 0; i < clusterNum * 12; i++) {
+    for (int i = 0; i < maxClusters * 12; i++) {
         vertices[i].position = sf::Vector2f(-40000, -40000);
     }
     clusters.clear();
@@ -116,17 +173,34 @@ void ClusterStructure::settemp(double temp) {
     moveGenerator.settmp(temp);
 }
 
+void ClusterStructure::swapCollisionTech() {
+    staticCollision = !staticCollision;
+    mmap.staticCollision = !mmap.staticCollision;
+}
+
+std::vector<HexCluster*> ClusterStructure::timesort() {
+    std::vector<HexCluster*> ans;
+    for (int i = 0; i < clusterNum; ++i) {
+        if (clusters[i].stopped) {
+            ans.push_back(&clusters[i]);
+        }
+    }
+    std::sort(ans.begin(), ans.end(), [](HexCluster* a, HexCluster* b) {return a->lifetime < b->lifetime; });
+    return ans;
+}
+
 MeshMap::MeshMap(const int& _stepAmt,
     const double& _clusterSize,
     const double& _dimensions)
 
     : dimension(_dimensions), stepAmt(_stepAmt),
-    stepNum(0), cellSize(_clusterSize) {
+    stepNum(0), cellSize(_clusterSize), staticCollision(false) {
     // dimension is equal to half of the size of the rectangle -> and the cellsize is doubled
     size = std::ceil(dimension / cellSize * 2);
     meshMap = new std::list<Cluster*>[size * size];
 
 }
+
 MeshMap::~MeshMap() {
     delete[] meshMap;
 }
@@ -257,10 +331,30 @@ void MeshMap::checkCollision() {
 }
 void MeshMap::collision(Cluster* a, Cluster* b) {
     // can be made a bit more abstract
-    a->stopped = true;
-    b->stopped = true;
-    
+    if (staticCollision) {
+        if (a->stopped || b->stopped) {
+            a->stopped = true;
+            b->stopped = true;
+            if (a->lifetime == 0) {
+                a->lifetime = gclock.getElapsedTime().asMicroseconds();
+            }
+            if (b->lifetime == 0) {
+                b->lifetime = gclock.getElapsedTime().asMicroseconds();
+            }
+        }
+    }
+    else {
+        a->stopped = true;
+        b->stopped = true;
+        if (a->lifetime == 0) {
+            a->lifetime = gclock.getElapsedTime().asMicroseconds();
+        }
+        if (b->lifetime == 0) {
+        b->lifetime = gclock.getElapsedTime().asMicroseconds();
+    }
+    }
 }
+
 
 void MeshMap::clear() {
     for (int i = 0; i < size * size; i++) {

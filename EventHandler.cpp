@@ -27,5 +27,6 @@ void EventHandler::handle() {
             fixedView->setCenter(event.size.width / 2.0, event.size.height / 2.0);
             
         }
+        
     }
 }

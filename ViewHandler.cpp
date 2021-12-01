@@ -1,5 +1,4 @@
 #include "ViewHandler.h"
-#include "GlobalFunctions.h"
 
 viewHandler::viewHandler(sf::RenderWindow* _win) : mpos(sf::Vector2f()), prevmpos(sf::Vector2f()),
 lmb(false), rmb(false), shiftmult(1), win(_win), zoom(1)
@@ -10,19 +9,17 @@ lmb(false), rmb(false), shiftmult(1), win(_win), zoom(1)
 }
 
 void viewHandler::handle() {
+    static bool btnLock = true;
+    if (!win->hasFocus()) {
+        return;
+    }
+    
+    
+
     mpos = win->mapPixelToCoords(sf::Mouse::getPosition(*win));
     //mouse handling
     lmb = (sf::Mouse::isButtonPressed(sf::Mouse::Left));
     rmb = (sf::Mouse::isButtonPressed(sf::Mouse::Right));
-
-    //shift
-    if (keypress(sf::Keyboard::LShift)) {
-        shiftmult = 10;
-    }
-    else {
-        shiftmult = 1;
-    }
-
 
     // view movement
     if (keypress(sf::Keyboard::A)) {
@@ -37,8 +34,16 @@ void viewHandler::handle() {
     if (keypress(sf::Keyboard::S)) {
         view.move(0, 5 * shiftmult* MOVE_MULTIPLIER);
     }
-    if (rmb) {
+
+    if (btnLock && !lmb) {
+        btnLock = false;
+    }
+
+    if (!btnLock && 
+            sf::Mouse::getPosition(*win).x > win->getSize().x / 100.0 * CONTROL_PART &&
+            lmb) {
         view.move(-mpos.x + prevmpos.x, -mpos.y + prevmpos.y);
+        
     }
     else {
         prevmpos = mpos;
@@ -56,8 +61,8 @@ void viewHandler::handle() {
 }
 
 void viewHandler::mouseWheelScroll(float delta) {
-    // does not work
-    //view.setSize(view.getSize() + sf::Vector2f(-100 * shiftmult * MOVE_MULTIPLIER * delta, -100 * shiftmult * MOVE_MULTIPLIER * screenratio * delta));
+    zoom *= (1.0 - delta * 0.1);
+    view.zoom(1.0 - delta * 0.1);
 }
 
 void viewHandler::setView() {
