@@ -41,6 +41,7 @@ bool appInFocus(sf::RenderWindow& app)
 }
 
 void menu(sf::RenderWindow& win) {
+
     sf::View view = win.getDefaultView();
     std::string savename = "";
     win.setFramerateLimit(FPS);
@@ -51,6 +52,42 @@ void menu(sf::RenderWindow& win) {
 
     sf::Vector2f clientsize = sf::Vector2f(win.getSize());
 
+    sf::RectangleShape load2(sf::Vector2f(clientsize.x / 1400.0 * 243.0, clientsize.y * 0.0714));
+    sf::Texture loadtext2;
+    load2.setPosition(clientsize.x * 1.1286 / 2 + 40, clientsize.y * 1.1428 / 2 + 20);
+    if (!loadtext2.loadFromFile("images/save2.png")) {
+        std::cout << "Failed to load image\n";
+        return;
+    }
+    load2.setTexture(&loadtext2);
+
+    sf::RectangleShape load1(sf::Vector2f(clientsize.x / 1400.0 * 243.0, clientsize.y * 0.0714));
+    sf::Texture loadtext1;
+    load1.setPosition(clientsize.x * 1.1286 / 2 + 40, clientsize.y / 2 + 10);
+    if (!loadtext1.loadFromFile("images/save1.png")) {
+        std::cout << "Failed to load image\n";
+        return;
+    }
+    load1.setTexture(&loadtext1);
+    
+    sf::RectangleShape loadOutline(sf::Vector2f(clientsize.x / 1400.0 * 283.0, clientsize.y / 700.0 * 210.0));
+    loadOutline.setPosition(clientsize.x * 1.1286 / 2 + 20, clientsize.y * 0.8572 / 2 );
+    sf::Texture loadOT;
+    if (!loadOT.loadFromFile("images/saves.png")) {
+        std::cout << "Failed to load image\n";
+        return;
+    }
+    loadOutline.setTexture(&loadOT);
+
+    sf::RectangleShape name(sf::Vector2f(1200, 200));
+    sf::Texture nameT;
+    name.setPosition(clientsize.x / 2 - 600, 200);
+    if (!nameT.loadFromFile("images/name.png")) {
+        std::cout << "Failed to load image\n";
+        return;
+    }
+    name.setTexture(&nameT);
+
     sf::RectangleShape vmk(sf::Vector2f(clientsize.x, 200));
     sf::Texture circus;
     vmk.setPosition(0, 0);
@@ -60,52 +97,27 @@ void menu(sf::RenderWindow& win) {
     }
     vmk.setTexture(&circus);
 
-    sf::RectangleShape start(sf::Vector2f(180, 50));
+    sf::RectangleShape start(sf::Vector2f(clientsize.x * 0.1286, clientsize.y * 0.0714));
     sf::Texture stext;
-    start.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 - 25);
+    start.setPosition(clientsize.x * 0.8714 / 2, clientsize.y * 0.8572 / 2);
     if (!stext.loadFromFile("images/startBtn.png")) {
         std::cout << "Failed to load image\n";
         return;
     }
     start.setTexture(&stext);
 
-    
-
-    sf::RectangleShape load1(sf::Vector2f(243, 50));
-    sf::Texture loadtext1;
-    load1.setPosition(clientsize.x / 2 + 90 + 40, clientsize.y / 2 - 25 + 70);
-    if (!loadtext1.loadFromFile("images/save1.png")) {
+    sf::RectangleShape gallery(sf::Vector2f(clientsize.x * 0.1286, clientsize.y * 0.0714));
+    sf::Texture tGallery;
+    gallery.setPosition(clientsize.x * 0.8714 / 2, clientsize.y / 2 + 10);
+    if (!tGallery.loadFromFile("images/gallery.png")) {
         std::cout << "Failed to load image\n";
         return;
     }
-    load1.setTexture(&loadtext1);
+    gallery.setTexture(&tGallery);
 
-    sf::RectangleShape load2(sf::Vector2f(243, 50));
-    sf::Texture loadtext2;
-    load2.setPosition(clientsize.x / 2 + 90 + 40, clientsize.y / 2 + 45 + 70);
-    if (!loadtext2.loadFromFile("images/save2.png")) {
-        std::cout << "Failed to load image\n";
-        return;
-    }
-    load2.setTexture(&loadtext2);
-
-    
-    sf::RectangleShape loadOutline(sf::Vector2f(283, 210));
-    loadOutline.setPosition(clientsize.x / 2 + 90 + 20, clientsize.y / 2 - 25);
-    sf::Texture loadOT;
-    if (!loadOT.loadFromFile("images/saves.png")) {
-        std::cout << "Failed to load image\n";
-        return;
-    }
-    loadOutline.setTexture(&loadOT);
-
-    sf::Text loadFile("filename", GlobalFont, 50);
-    loadFile.setPosition(clientsize.x / 2 - 90 + 200, clientsize.y / 2 + 35);
-    loadFile.setFillColor(sf::Color::Green);
-
-    sf::RectangleShape authors(sf::Vector2f(180, 50));
+    sf::RectangleShape authors(sf::Vector2f(clientsize.x * 0.1286, clientsize.y * 0.0714));
     sf::Texture at;
-    authors.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 + 45 + 70);
+    authors.setPosition(clientsize.x * 0.8714 / 2, clientsize.y * 1.1428 / 2 + 20);
     if (!at.loadFromFile("images/authors.png")) {
         std::cout << "Failed to load image\n";
         return;
@@ -113,44 +125,32 @@ void menu(sf::RenderWindow& win) {
     authors.setTexture(&at);
 
     
-    sf::RectangleShape theory(sf::Vector2f(180, 50));
+    sf::RectangleShape theory(sf::Vector2f(clientsize.x * 0.1286, clientsize.y * 0.0714));
     sf::Texture theoryText;
-    theory.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 + 45 + 140);
+    theory.setPosition(clientsize.x * 0.8714 / 2, clientsize.y * 1.2856 / 2 + 30);
     if (!theoryText.loadFromFile("images/theoryBtn.png")) {
         std::cout << "Failed to load image\n";
         return;
     }
     theory.setTexture(&theoryText);
     
-
-
-    sf::RectangleShape exit(sf::Vector2f(180, 50));
+    sf::RectangleShape exit(sf::Vector2f(clientsize.x * 0.1286, clientsize.y * 0.0714));
     sf::Texture et;
-    exit.setPosition(clientsize.x / 2 - 90, clientsize.y / 2 + 45 + 140 + 70);
+    exit.setPosition(clientsize.x * 0.8714 / 2, clientsize.y * 1.4284 / 2 + 40);
     if (!et.loadFromFile("images/exitBtn.png")) {
         std::cout << "Failed to load image\n";
         return;
     }
     exit.setTexture(&et);
 
-    sf::RectangleShape max(sf::Vector2f(400, 400));
-    sf::Texture maxt;
-    max.setPosition(clientsize.x / 2 - 400 - 20, clientsize.y / 2 - 200);
-    if (!maxt.loadFromFile("images/max.jpg")) {
+    sf::RectangleShape niceGuys(sf::Vector2f(850, 500));
+    sf::Texture niceTExture;
+    niceGuys.setPosition(clientsize.x / 2 - 400 - 20, clientsize.y / 2 - 300);
+    if (!niceTExture.loadFromFile("images/krasavchiki.png")) {
         std::cout << "Failed to load image\n";
         return;
     }
-    max.setTexture(&maxt);
-
-    sf::RectangleShape danya(sf::Vector2f(400, 400));
-    sf::Texture danyat;
-    danya.setPosition(clientsize.x / 2 + 20, clientsize.y / 2 - 200);
-    if (!danyat.loadFromFile("images/danya.jpg")) {
-        std::cout << "Failed to load image\n";
-        return;
-    }
-    danya.setTexture(&danyat);
-
+    niceGuys.setTexture(&niceTExture);
 
     while (win.isOpen()) {
         Event event;
@@ -163,21 +163,19 @@ void menu(sf::RenderWindow& win) {
                 view.setSize(event.size.width, event.size.height);
                 win.setView(view);
             }
+            // redundant savefile loading
+            /*
             else if (event.type == Event::KeyPressed) {
                 if (appInFocus(win)) {
-
                     
                     if (event.key.code <= 25 && event.key.code >= 0) {
                         savename += ('a' + event.key.code);
-                        loadFile.setString(savename);
                     }
                     else if (event.key.code <= 35) {
                         savename += ('0' + event.key.code - 26);
-                        loadFile.setString(savename);
                     }
                     else if (event.key.code == 59 && savename.size() > 0) {
                         savename = savename.substr(0, savename.size() - 1);
-                        loadFile.setString(savename);
                     }
                     else if (event.key.code == 58 && savename.size() > 0) {
                         state = GAME;
@@ -187,11 +185,12 @@ void menu(sf::RenderWindow& win) {
                     }
                     else if (event.key.code == 50) {
                         savename += '.';
-                        loadFile.setString(savename);
                     }
                     std::cout << savename << "\n";
+                   
                 }
             }
+             */
         }
         
         sf::Vector2f mpos(win.mapPixelToCoords(sf::Mouse::getPosition(win)));
@@ -227,6 +226,9 @@ void menu(sf::RenderWindow& win) {
                         win.close();
                     }
                 }
+                if (gallery.getGlobalBounds().contains(mpos)) {
+                    ShellExecute(NULL, "open", TEXT("images\\power.png"), NULL, NULL, SW_SHOW);
+                }
                 if (theory.getGlobalBounds().contains(mpos)) {
                     ShellExecute(NULL, "open", TEXT("theory.pdf"), NULL, NULL, SW_SHOW);
                 }
@@ -242,15 +244,16 @@ void menu(sf::RenderWindow& win) {
 
         if (state == MENU) {
             win.draw(start);
+            win.draw(name);
             win.draw(loadOutline);
             win.draw(load1);
             win.draw(load2);
             win.draw(theory);
             win.draw(authors);
+            win.draw(gallery);
         }
         if (state == AUTHORS) {
-            win.draw(max);
-            win.draw(danya);
+            win.draw(niceGuys);
         }
         win.draw(exit);
         win.draw(vmk);
@@ -271,7 +274,7 @@ void simulation(sf::RenderWindow& win,
     if (ans.size() == 0) {
         return;
     }
-
+    vhandler->lmbMoveLock = true;
     gui->update();
     bool btnLock = true;
     unsigned int frameCount = 0, buttonTimer = 100;
@@ -420,8 +423,8 @@ int game(sf::RenderWindow& win, std::string filename) {
         cluSize = clusters.clusterSize;
         in.close();
     }
-    sf::RectangleShape boundingBox(sf::Vector2f(DEFAULTVIEWSIZE * 0.89, DEFAULTVIEWSIZE * 0.89));
-    boundingBox.setPosition(-DEFAULTVIEWSIZE * 0.43, -DEFAULTVIEWSIZE * 0.43);
+    sf::RectangleShape boundingBox(sf::Vector2f(DEFAULTVIEWSIZE * 0.88, DEFAULTVIEWSIZE * 0.88));
+    boundingBox.setPosition(-DEFAULTVIEWSIZE * 0.44, -DEFAULTVIEWSIZE * 0.44);
     boundingBox.setOutlineThickness(50);
     boundingBox.setOutlineColor(sf::Color::Green);
     boundingBox.setFillColor(sf::Color::Transparent);
@@ -610,7 +613,11 @@ int main() {
         return 0;
     }
     unsigned int frameCount = 0;
-    RenderWindow win(VideoMode(1400, 700), "Stat Phys");
+    auto t = VideoMode::getDesktopMode();
+    t.width -= 30;
+    t.height -= 100;
+    RenderWindow win(t, "Stat Phys", sf::Style::Default);
+    win.setPosition(sf::Vector2i(10, 0));
     win.setVerticalSyncEnabled(false);
     menu(win);
     return 0;

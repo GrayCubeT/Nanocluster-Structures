@@ -38,9 +38,7 @@ private:
     // button textures
     sf::Texture stopTexture;
     sf::Texture startTexture;
-    sf::Texture getStatsTexture;
     sf::Texture exitTexture;
-    sf::Texture simulationTexture;
 
     sf::Texture pauseTexture;
     sf::Texture unpauseTexture;
@@ -57,8 +55,6 @@ private:
     sf::RectangleShape startBtn;
     sf::RectangleShape pauseBtn;
     sf::RectangleShape toggleSpawnBtn;
-    sf::RectangleShape getStatsBtn;
-    sf::RectangleShape simulateBtn;
     sf::RectangleShape specialModeBtn;
 
     sf::RectangleShape ccText;
@@ -104,13 +100,14 @@ public:
 
 template<typename T>
 inline Slider<T>::Slider(T* val, T maxval, T minval, sf::FloatRect _rect, std::string filename) :
-        val(val), maxVal(maxval), minVal(minval), 
-        rect(_rect.left, _rect.top + 39, _rect.width, 20) {
+        val(val), maxVal(maxval), minVal(minval) {
 
+
+    rect = sf::FloatRect(_rect.left, _rect.top + _rect.height / 62.0 * 39.0, _rect.width, _rect.height / 3.1);
     double part = (double(*val) - minval) / (double(maxval) - minval);
 
-    fill = sf::RectangleShape(sf::Vector2f(_rect.width * part, _rect.height / 3.1));
-    fill.setPosition(_rect.left + 3, _rect.top + 39);
+    fill = sf::RectangleShape(sf::Vector2f((rect.width - 6) * part, rect.height));
+    fill.setPosition(rect.left + rect.width * 0.0093457943925233, rect.top);
     fill.setFillColor(SLIDER_COLOR);
 
     background = sf::RectangleShape(sf::Vector2f(_rect.width, _rect.height));
@@ -137,6 +134,7 @@ inline bool Slider<T>::contains(sf::Vector2f point) {
 
 template<typename T>
 inline void Slider<T>::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    
     target.draw(background);
     target.draw(fill);
     target.draw(t);
@@ -154,9 +152,7 @@ inline void Slider<T>::onPress(sf::Vector2f pos) {
     }
     *val = value;
 
-    auto size = sf::Vector2f(rect.width - 6, rect.height);
-    fill.setSize(sf::Vector2f(size.x * part, size.y));
+    fill.setSize(sf::Vector2f((rect.width - 6) * part, rect.height));
 
     t.setString(numtostr(*val, 1));
-
 }

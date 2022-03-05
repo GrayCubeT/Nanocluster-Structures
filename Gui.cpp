@@ -53,10 +53,6 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
         failed = true;
         return;
     }
-    if (!simulationTexture.loadFromFile("images/speedGenerate.png")) {
-        failed = true;
-        return;
-    }
     if (!unpauseTexture.loadFromFile("images/pauseOff.png")) {
         failed = true;
         return;
@@ -70,10 +66,6 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
         return;
     }
     if (!spawnOffTexture.loadFromFile("images/spawnOff.png")) {
-        failed = true;
-        return;
-    } 
-    if (!getStatsTexture.loadFromFile("images/getStatsBtn.png")) {
         failed = true;
         return;
     }
@@ -98,56 +90,47 @@ Gui::Gui(sf::Vector2f* _clientsize, bool* _paused, bool* _spawnRandom, bool* _no
     double x = clientsize->x / 14 * (CONTROL_PART * 0.02);
     double y = clientsize->y / 7;
 
-    startBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
+    startBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
     startBtn.setFillColor(sf::Color::White);
     startBtn.setTexture(&startTexture);
-    startBtn.setPosition(x * 0.2, y * 0.2);
+    startBtn.setPosition(x * -100.0, y * 0.2);
 
-    pauseBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
-    pauseBtn.setFillColor(sf::Color::White);
-    pauseBtn.setTexture(&pauseTexture);
-    pauseBtn.setPosition(x * 2.7, y * 1.1);
-
-    stopBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
+    stopBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
     stopBtn.setFillColor(sf::Color::White);
     stopBtn.setTexture(&stopTexture);
-    stopBtn.setPosition(x * 2.7, y * 0.2);
+    stopBtn.setPosition(x * 0.2, y * 0.2);
 
-    toggleSpawnBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
-    toggleSpawnBtn.setFillColor(sf::Color::White);
-    toggleSpawnBtn.setTexture(&spawnOnTexture);
-    toggleSpawnBtn.setPosition(x * 0.2, y * 1.1);
-
-    getStatsBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
-    getStatsBtn.setFillColor(sf::Color::White);
-    getStatsBtn.setTexture(&getStatsTexture);
-    getStatsBtn.setPosition(x * 0.2, y * 6.2);
-
-    exitBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
+    exitBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
     exitBtn.setFillColor(sf::Color::White);
     exitBtn.setTexture(&exitTexture);
-    exitBtn.setPosition(x * 5.2, y * 6.2);
+    exitBtn.setPosition(x * 2.5, y * 0.2);
 
-    simulateBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
-    simulateBtn.setFillColor(sf::Color::White);
-    simulateBtn.setTexture(&simulationTexture);
-    simulateBtn.setPosition(x * 2.7, y * 6.2);
+    pauseBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
+    pauseBtn.setFillColor(sf::Color::White);
+    pauseBtn.setTexture(&pauseTexture);
+    pauseBtn.setPosition(x * 0.2, y * 1.1);
 
-    specialModeBtn = sf::RectangleShape(sf::Vector2f(x * 1.8, y * 0.5));
+    toggleSpawnBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
+    toggleSpawnBtn.setFillColor(sf::Color::White);
+    toggleSpawnBtn.setTexture(&spawnOnTexture);
+    toggleSpawnBtn.setPosition(x * 2.5, y * 1.1);
+
+    specialModeBtn = sf::RectangleShape(sf::Vector2f(x * 2.0, y * 0.5));
     specialModeBtn.setFillColor(sf::Color::White);
     specialModeBtn.setTexture(&specialModeOffTexture);
-    specialModeBtn.setPosition(x * 5.2, y * 1.1);
+    specialModeBtn.setPosition(x * 4.8, y * 1.1);
 
     ccText = sf::RectangleShape(sf::Vector2f(x * 3.6, y * 0.5));
     ccText.setFillColor(sf::Color::White);
     ccText.setTexture(&ccTexture);
-    ccText.setPosition(x * 5.2, y * 0.2);
+    ccText.setPosition(x * 4.8, y * 0.2);
 
-    clusterCounter.setPosition(x * 8.9, y * 0.2);
-    clusterCounter.setCharacterSize(30);
+    clusterCounter.setPosition(x * 8.45, y * 0.2);
+    clusterCounter.setCharacterSize(y * 0.5);
     clusterCounter.setFillColor(TEXT_COLOR);
     clusterCounter.setOutlineColor(OUTLINE_COLOR);
     clusterCounter.setOutlineThickness(OUTLINE_THICKNESS);
+
 
     failed = false;
 }
@@ -159,13 +142,13 @@ void Gui::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         target.draw(temp);
         target.draw(spawnSpeed);
         target.draw(spawnAmt);
-        target.draw(getStatsBtn);   
+        //target.draw(getStatsBtn);   
         target.draw(toggleSpawnBtn);
-        target.draw(startBtn);
+        //target.draw(startBtn);
         target.draw(stopBtn);
         target.draw(specialModeBtn);
     }
-    target.draw(simulateBtn);
+    //target.draw(simulateBtn);
     target.draw(calcSpeed);
     target.draw(pauseBtn);
     target.draw(exitBtn);
@@ -180,10 +163,7 @@ void Gui::check(sf::Vector2i mpos) {
     click = true;
     bool simclick = true;
     if (!simulation) {
-        if (getStatsBtn.getGlobalBounds().contains(p)) {
-            statsRequest = true;
-        }
-        else if (startBtn.getGlobalBounds().contains(p)) {
+        if (startBtn.getGlobalBounds().contains(p)) {
             *paused = false;
             pauseBtn.setTexture(&unpauseTexture);
         }
@@ -228,9 +208,6 @@ void Gui::check(sf::Vector2i mpos) {
     }
     else if (exitBtn.getGlobalBounds().contains(p)) {
         exitRequest = true;
-    }
-    else if (simulateBtn.getGlobalBounds().contains(p)) {
-        simRequest = true;
     }
     else {
         click = false;

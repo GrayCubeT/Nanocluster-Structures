@@ -1,7 +1,7 @@
 #include "ViewHandler.h"
 
 viewHandler::viewHandler(sf::RenderWindow* _win) : mpos(sf::Vector2f()), prevmpos(sf::Vector2f()),
-lmb(false), rmb(false), shiftmult(1), win(_win), zoom(1)
+lmb(false), rmb(false), shiftmult(1), win(_win), zoom(1), lmbMoveLock(true)
 {
     view = win->getDefaultView();
     clientsize = sf::Vector2f(win->getSize());
@@ -9,8 +9,9 @@ lmb(false), rmb(false), shiftmult(1), win(_win), zoom(1)
 }
 
 void viewHandler::handle() {
-    static bool btnLock = true;
+
     if (!win->hasFocus()) {
+        lmbMoveLock = true;
         return;
     }
     
@@ -35,11 +36,11 @@ void viewHandler::handle() {
         view.move(0, 5 * shiftmult* MOVE_MULTIPLIER);
     }
 
-    if (btnLock && !lmb) {
-        btnLock = false;
+    if (lmbMoveLock && !lmb) {
+        lmbMoveLock = false;
     }
 
-    if (!btnLock && 
+    if (!lmbMoveLock &&
             sf::Mouse::getPosition(*win).x > win->getSize().x / 100.0 * CONTROL_PART &&
             lmb) {
         view.move(-mpos.x + prevmpos.x, -mpos.y + prevmpos.y);

@@ -18,6 +18,7 @@ public:
     sf::Vector2f clientsize;
     // y / x clientsize
     double screenratio;
+    bool lmbMoveLock;
     sf::RenderWindow* win;
     sf::View view;
 
